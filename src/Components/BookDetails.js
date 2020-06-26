@@ -28,7 +28,7 @@ class BookDetails extends Component {
   render() {
     const { book } = this.state;
     if (!book) {
-      return <p>Loading book</p>;
+      return <div>loading book</div>;
     }
     return (
       <div className='search-books'>
