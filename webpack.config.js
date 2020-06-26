@@ -1,19 +1,20 @@
 var webpack = require('webpack');
 var path = require('path');
 var htmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 var BUILD_DIR = path.join(__dirname, 'dist');
 var APP_DIR = path.join(__dirname, 'src');
 
-const VENDOR_LIBS = [
-  'react', 'react-dom', 'react-router-dom'
-];
+// const VENDOR_LIBS = [
+//   'react', 'react-dom', 'react-router-dom'
+// ];
 
 var config = {
   // entry: APP_DIR + '/index.js',
   entry: {
     bundle: APP_DIR + '/index.js',
-    vendor: VENDOR_LIBS
+    // vendor: VENDOR_LIBS
   },
   output: {
     // path: BUILD_DIR,
@@ -21,6 +22,21 @@ var config = {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].[hash].js',
     publicPath: '/'
+  },
+  optimization: {
+    // splitChunks: {
+    //   chunks: 'all'
+    // },
+    // runtimeChunk: 'single',
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          chunks: 'all',
+        },
+      },
+    },
   },
   module: {
     rules: [
@@ -57,12 +73,13 @@ var config = {
     hot: true
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new htmlWebpackPlugin({
       template: 'index.html'
     }),
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['vendor', 'manifest']
-    }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   names: ['vendor', 'manifest']
+    // }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
